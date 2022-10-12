@@ -1,3 +1,5 @@
+const historial = [];
+
 function calcular(numero1, numero2, signo) {
 
     if(isNaN(numero1)||isNaN(numero2)){
@@ -18,11 +20,23 @@ function calcular(numero1, numero2, signo) {
         default:
             return "No fue posible calcular la operación.";
     }
+
 }
 
-for (let i = 0; i < 20; i++){
+
+for (let i = 0; i < 2; i++){
 let primerNumero = parseInt(prompt("Ingresá el primer número"))
 let segundoNumero = parseInt(prompt("Ingresá el segundo número"))
 let signo = prompt("Ingresá el signo segun corresponda: Suma:+ Resta:- Multiplicación:* División:/")
-alert (calcular(primerNumero, segundoNumero, signo));
+let resultado = calcular(primerNumero, segundoNumero, signo);
+const cuenta = {
+    operacion: signo,
+    solucion: resultado,
 }
+alert (resultado);
+historial.push(cuenta);
+console.log(historial); 
+}
+
+
+
