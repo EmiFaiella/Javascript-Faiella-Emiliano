@@ -161,12 +161,12 @@ cargarEventlistener();
 
 function cargarEventlistener(){
 
-    listaFunkos.addEventListener('click', agregarFunko);
+    listaFunkos.addEventListener("click", agregarFunko);
 
-    carrito.addEventListener('click' , eliminarFunko);
+    carrito.addEventListener("click" , eliminarFunko);
 
-    vaciarCarritoBtn.addEventListener('click' , ()=> {
-        console.log('vaciando carrito');
+    vaciarCarritoBtn.addEventListener("click" , ()=> {
+        console.log("Vaciando carrito...");
         articuloCarrito = [];
         limpiarHtml();
     })
@@ -194,33 +194,13 @@ function eliminarFunko(e){
 }
 
 function leerDatosFunko(funkos){
-    console.log(funkos);
-    
-    const infoFunko = {
-        nombre: funkos.find(elemento => elemento.nombre),
-        precio: funkos.precio,
-        id : funkos.id,
-        cantidad: 1
-    }
-
-    const existe = articuloCarrito.some( funkos => funkos.id === infoFunko.id  )
-    if( existe ){
-        const funkos = articuloCarrito.map( funkos => {
-            if (funkos.id === infoFunko.id) {
-                funkos.cantidad++;
-                return funkos;
-            }
-            else{
-                return funkos;
-            }
-        })
-        articuloCarrito = [...funkos];
-    }else{
-        articuloCarrito = [...articuloCarrito , infoFunko];
-    }
-
-    console.log(articuloCarrito);
-    carritoHTML();
+const agregarAlCarrito = (prodNombre) => {
+    const item = funkos.find( (prod) => prod.nombre === prodNombre)
+    carrito.push(item)
+    agregarFunko()
+    console.log(agregarAlCarrito);
+    console.log(articuloCarrito)
+}
 }
 
 
@@ -250,3 +230,4 @@ function limpiarHtml(){
     
 }
 
+console.log(articuloCarrito);
