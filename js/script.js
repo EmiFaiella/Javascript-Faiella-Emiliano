@@ -1,68 +1,90 @@
-const usuarios = [{
-    nombre: "Emiliano",
-    mail: "emilianito@hotmail.com",
-    pass: "emiliano123"
-},
-{
-    nombre: "Juana",
-    mail: "juanita@gmail.com",
-    pass: "juana456"
-},
-{
-    nombre: "Valentin",
-    mail: "valentin@outlook.com",
-    pass: "valentin789"
-}]
+document.addEventListener('DOMContentLoaded', () => {
+    // Variables
 
-const funkos = [{
-    nombre: "Black Adam",
-    id: "1",
-    categoria: "DC",
-    precio: 8.500,
-},
-{
-    nombre: "The Flash",
-    id: "2",
-    categoria: "DC",
-    precio: 8.200
-},
-{
-    nombre: "Harry Potter GF",
-    id: "3",
-    categoria: "Harry Potter",
-    precio: 8.500
-},
-{
-    nombre: "Harry Potter",
-    id: "4",
-    categoria: "Harry Potter",
-    precio: 10.500
-},
-{
-    nombre: "Scarlet Witch",
-    id: "5",
-    categoria: "Marvel",
-    precio: 9.900
-},
-{
-    nombre: "Luke Skywalker",
-    id: "6",
-    categoria: "Star Wars",
-    precio: 10.900
-}]
+    const usuarios = [{
+        nombre: "Emiliano",
+        mail: "emilianito@hotmail.com",
+        pass: "emiliano123"
+    },
+    {
+        nombre: "Juana",
+        mail: "juanita@gmail.com",
+        pass: "juana456"
+    },
+    {
+        nombre: "Valentin",
+        mail: "valentin@outlook.com",
+        pass: "valentin789"
+    }]
 
-const mailLogin = document.getElementById("emailLogin"),
-    passLogin = document.getElementById("passwordLogin"),
-    recordar = document.getElementById("recordarme"),
-    btnLogin = document.getElementById("login"),
-    modalEl = document.getElementById("modalLogin"),
-    modal = new bootstrap.Modal(modalEl),
-    toggles = document.querySelectorAll(".toggles");
+    const baseDeDatos = [
+        {
+            nombre: "Black Adam",
+            id: 1,
+            categoria: "DC",
+            precio: 8500,
+            imagen: "img/funko black adam.png"
+        },
+        {
+            nombre: "The Flash",
+            id: 2,
+            categoria: "DC",
+            precio: 8200,
+            imagen: "img/funko flash.png"
+        },
+        {
+            nombre: "Harry Potter GF",
+            id: 3,
+            categoria: "Harry Potter",
+            precio: 8500,
+            imagen: "img/funko harry 2.png"
+        },
+        {
+            nombre: "Harry Potter",
+            id: 4,
+            categoria: "Harry Potter",
+            precio: 10500,
+            imagen: "img/funko harry.png"
+        },
+        {
+            nombre: "Scarlet Witch",
+            id: 5,
+            categoria: "Marvel",
+            precio: 9900,
+            imagen: "img/funko scarlet witch.png"
+        },
+        {
+            nombre: "Luke Skywalker",
+            id: 6,
+            categoria: "Star Wars",
+            precio: 10900,
+            imagen: "img/funko star wars.png"
+        }
+
+    ];
+    const mailLogin = document.getElementById("emailLogin"),
+        passLogin = document.getElementById("passwordLogin"),
+        recordar = document.getElementById("recordarme"),
+        btnLogin = document.getElementById("login"),
+        modalEl = document.getElementById("modalLogin"),
+        modal = new bootstrap.Modal(modalEl),
+        toggles = document.querySelectorAll(".toggles");
+
+    let carrito = [];
+    const divisa = "$";
+    const DOMitems = document.querySelector("#items");
+    const DOMcarrito = document.querySelector("#carrito");
+    const DOMtotal = document.querySelector("#total");
+    const DOMbotonVaciar = document.querySelector("#botonFinalizarCompra");
+
+    // Funciones
+
+  
 
 function validarUsuario(usersDB, user, pass) {
     let encontrado = usersDB.find((userDB) => userDB.mail == user);
 
-    if (typeof encontrado === 'undefined') {
+    if (typeof encontrado === "undefined") {
         return false;
     } else {
 
@@ -112,7 +134,7 @@ function presentarInfo(array, clase) {
     });
 }
 
-btnLogin.addEventListener('click', (e) => {
+btnLogin.addEventListener("click", (e) => {
     e.preventDefault();
 
     let data = validarUsuario(usuarios, mailLogin.value, passLogin.value);
@@ -130,104 +152,142 @@ btnLogin.addEventListener('click', (e) => {
         }
 
         modal.hide();
-        presentarInfo(toggles, 'd-none');
+        presentarInfo(toggles, "d-none");
     }
 });
 
-btnLogout.addEventListener('click', () => {
+btnLogout.addEventListener("click", () => {
     borrarDatos();
-    presentarInfo(toggles, 'd-none');
+    presentarInfo(toggles, "d-none");
 });
 
-window.onload = () => estaLogueado(recuperarUsuario(localStorage)); 
+window.onload = () => estaLogueado(recuperarUsuario(localStorage));
 
-
-
-// carrito
-
-const carrito = document.querySelector('#carrito') 
-
-const contenedorCarrito = document.querySelector('#lista-carrito tbody');
-//boton limpiar carrito.
-const vaciarCarritoBtn = document.querySelector('#vaciar-carrito');
-//lista de funkos
-const listaFunkos = document.querySelector('#lista-funkos');
-
-//variables
-let articuloCarrito = [];
-
-
-cargarEventlistener();
-
-function cargarEventlistener(){
-
-    listaFunkos.addEventListener("click", agregarFunko);
-
-    carrito.addEventListener("click" , eliminarFunko);
-
-    vaciarCarritoBtn.addEventListener("click" , ()=> {
-        console.log("Vaciando carrito...");
-        articuloCarrito = [];
-        limpiarHtml();
-    })
-}
-
-//funciones:
-function agregarFunko(e){
-    e.preventDefault();
-    if(e.target.classList.contains("agregar-carrito")){
-        console.log('Agregar Funko al carrito...');
-        const funkoSeleccionado = (e.target.parentElement.parentElement);
-        leerDatosFunko(funkoSeleccionado);
+    function renderizarProductos() {
+        baseDeDatos.forEach((info) => {
+            // Estructura
+            const miNodo = document.createElement("div");
+            miNodo.classList.add("card", "col-sm-4");
+            // Body
+            const miNodoCardBody = document.createElement("div");
+            miNodoCardBody.classList.add("card-body");
+            // Titulo
+            const miNodoTitle = document.createElement("h5");
+            miNodoTitle.classList.add("card-title");
+            miNodoTitle.textContent = info.nombre;
+            // Imagen
+            const miNodoImagen = document.createElement("img");
+            miNodoImagen.classList.add("img-fluid");
+            miNodoImagen.setAttribute("src", info.imagen);
+            // Precio
+            const miNodoPrecio = document.createElement("p");
+            miNodoPrecio.classList.add("card-text");
+            miNodoPrecio.textContent = `${info.precio}${divisa}`;
+            // Boton 
+            const miNodoBoton = document.createElement("button");
+            miNodoBoton.classList.add("btn", "btn-primary");
+            miNodoBoton.textContent = "Agregar al carrito";
+            miNodoBoton.setAttribute("marcador", info.id);
+            miNodoBoton.addEventListener("click", añadirProductoAlCarrito);
+            
+            miNodoCardBody.appendChild(miNodoImagen);
+            miNodoCardBody.appendChild(miNodoTitle);
+            miNodoCardBody.appendChild(miNodoPrecio);
+            miNodoCardBody.appendChild(miNodoBoton);
+            miNodo.appendChild(miNodoCardBody);
+            DOMitems.appendChild(miNodo);
+        });
     }
+
     
-}
+    // Evento para añadir un producto al carrito de la compra
+    
+    function añadirProductoAlCarrito(evento) {
+        // Nodo a carrito
+        carrito.push(evento.target.getAttribute("marcador"))
+        // Actualizamos el carrito 
+        renderizarCarrito();
 
-function eliminarFunko(e){
-    e.preventDefault();
-    if (e.target.classList.contains('borrar-funko')) {
-        const funkoId =e.target.getAttribute('data-id');
-        articuloCarrito = articuloCarrito.filter( carrito => carrito.id !== funkoId); 
     }
 
-    carritoHTML();
-}
+    
+    function renderizarCarrito() {
+        // Vaciamos todo el html
+        DOMcarrito.textContent = "";
+        // Sacamos los duplicados
+        const carritoSinDuplicados = [...new Set(carrito)];
+        // Generamos los Nodos a partir del carrito
+        carritoSinDuplicados.forEach((item) => {
+            // Obtenemos el item que necesitamos de la variable base de datos
+            const miItem = baseDeDatos.filter((itemBaseDatos) => {
+                
+                return itemBaseDatos.id === parseInt(item);
+            });
+            // Cuenta el número de veces que se repite el producto
+            const numeroUnidadesItem = carrito.reduce((total, itemId) => {
+                // Coincidel los id??
+                return itemId === item ? total += 1 : total;
+            }, 0);
+            // Nodo del item del carrito
+            const miNodo = document.createElement("li");
+            miNodo.classList.add("list-group-item", "text-right", "mx-2");
+            miNodo.textContent = `${numeroUnidadesItem} x ${miItem[0].nombre} - ${miItem[0].precio}${divisa}`;
+            // Boton de borrar
+            const miBoton = document.createElement("button");
+            miBoton.classList.add("btn", "btn-danger", "mx-5");
+            miBoton.textContent = "X";
+            miBoton.style.marginLeft = "1rem";
+            miBoton.dataset.item = item;
+            miBoton.addEventListener("click", borrarItemCarrito);
+            // Mezclamos nodos
+            miNodo.appendChild(miBoton);
+            DOMcarrito.appendChild(miNodo);
+        });
+       // Renderizamos el precio total en el HTML
+       DOMtotal.textContent = calcularTotal();
+    }
 
-function leerDatosFunko(funkos){
-const agregarAlCarrito = (prodNombre) => {
-    const item = funkos.find( (prod) => prod.nombre === prodNombre)
-    carrito.push(item)
-    agregarFunko()
-    console.log(agregarAlCarrito);
-    console.log(articuloCarrito)
-}
-}
-
-
-function carritoHTML(){
-
-    limpiarHtml();
-
-    articuloCarrito.forEach( (funkos)=> {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td> ${funkos.nombre}</td>
-            <td> ${funkos.precio}</td>
-            <td> ${funkos.cantidad}</td>
-            <td> <a href="#" class="borrar-funkos" data-id=${funkos.id} > X </div> </td>
-        `;    
-        contenedorCarrito.appendChild(row);
+    
+    // Evento para borrar un elemento del carrito
+    
+    function borrarItemCarrito(evento) {
+        // Obtenemos el producto ID que hay en el boton pulsado
+        const id = evento.target.dataset.item;
+        // Borramos todos los productos
+        carrito = carrito.filter((carritoId) => {
+            return carritoId !== id;
+        });
         
-    } );
-
-}
-
-function limpiarHtml(){
-
-    while(contenedorCarrito.firstChild){
-        contenedorCarrito.removeChild( contenedorCarrito.firstChild );
+        renderizarCarrito();
     }
-    
-}
 
-console.log(articuloCarrito);
+   
+     // Calcula el precio total teniendo en cuenta los productos repetidos
+     
+    function calcularTotal() {
+        // Recorremos el array del carrito 
+        return carrito.reduce((total, item) => {
+            // De cada elemento obtenemos su precio
+            const miItem = baseDeDatos.filter((itemBaseDatos) => {
+                return itemBaseDatos.id === parseInt(item);
+            });
+            // Los sumamos al total
+            return total + miItem[0].precio;
+        }, 0).toFixed(2);
+    }
+
+    
+    function vaciarCarrito() {
+        // Limpiamos los productos guardados
+        carrito = [];
+        // Renderizamos los cambios
+        renderizarCarrito();
+    }
+
+    // Eventos
+    DOMbotonVaciar.addEventListener("click", vaciarCarrito);
+
+    // Inicio
+    renderizarProductos();
+    renderizarCarrito();
+  });
